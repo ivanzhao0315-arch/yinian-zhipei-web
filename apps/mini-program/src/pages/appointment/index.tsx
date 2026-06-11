@@ -11,7 +11,7 @@ export default function Appointment () {
   const [hospitalIndex, setHospitalIndex] = useState(0)
   const [serviceIndex, setServiceIndex] = useState(1)
   const [relationIndex, setRelationIndex] = useState(1)
-  const [date, setDate] = useState('2026-06-04')
+  const [date, setDate] = useState(() => new Date().toISOString().slice(0, 10))
   const [time, setTime] = useState('08:30')
   const [contactPhone, setContactPhone] = useState('')
 

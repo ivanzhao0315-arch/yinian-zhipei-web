@@ -94,13 +94,11 @@ const envAdminConfig = {
 }
 const adminSessionTtlSeconds = Number(process.env.ADMIN_SESSION_TTL_SECONDS ?? 60 * 60 * 12)
 const allowDemoAdminHeader =
-  !isProductionRuntime &&
-  (process.env.ALLOW_DEMO_ADMIN_HEADER === 'true' ||
-    process.env.ALLOW_DEMO_ADMIN_HEADER !== 'false')
+  !isProductionRuntime && process.env.ALLOW_DEMO_ADMIN_HEADER !== 'false'
 const allowDemoEscortHeader =
-  !isProductionRuntime &&
-  (process.env.ALLOW_DEMO_ESCORT_HEADER === 'true' ||
-    process.env.ALLOW_DEMO_ESCORT_HEADER !== 'false')
+  !isProductionRuntime && process.env.ALLOW_DEMO_ESCORT_HEADER !== 'false'
+const allowDemoFamilyHeader =
+  !isProductionRuntime && process.env.ALLOW_DEMO_FAMILY_HEADER !== 'false'
 const notificationService = new NotificationService(
   store,
   wechatPayConfig,
@@ -207,6 +205,25 @@ const requireEscortActor = async (request: FastifyRequest, reply: FastifyReply) 
   return undefined
 }
 
+const requireFamilyActor = async (request: FastifyRequest, reply: FastifyReply) => {
+  const cloudIdentity = cloudIdentityFromRequest(request)
+  if (cloudIdentity.openId) {
+    const user = await store.upsertFamilyUserByOpenId({ openId: cloudIdentity.openId })
+    return { role: 'family' as const, userId: user.userId, openId: user.openId }
+  }
+
+  if (allowDemoFamilyHeader) {
+    return {
+      role: 'family' as const,
+      userId: headerValue(request.headers['x-demo-user-id'], 'user_demo'),
+      openId: undefined,
+    }
+  }
+
+  reply.code(401).send({ error: 'unauthorized' })
+  return undefined
+}
+
 const notifyBestEffort = async (task: Promise<void>) => {
   try {
     await task
@@ -238,6 +255,7 @@ const sendStoreError = (reply: FastifyReply, error: unknown) => {
     message === 'invalid_operator_note' ||
     message === 'invalid_cancel_reason' ||
     message === 'invalid_refund_amount' ||
+    message === 'invalid_payment_amount' ||
     message === 'invalid_refund_status' ||
     message === 'escort_phone_not_allowed' ||
     message === 'escort_phone_mismatch' ||
@@ -316,16 +334,21 @@ app.get<{ Params: { '*': string } }>('/assets/*', async (request, reply) =>
   sendAdminAsset(reply, `assets/${request.params['*']}`),
 )
 
-app.get('/api/debug/wechat-config', async () => ({
-  payMode: wechatPayConfig.mode,
-  loginMode: wechatPayConfig.loginMode,
-  appIds: wechatPayConfig.appIds,
-  appSecretAppIds: Object.keys(wechatPayConfig.appSecrets),
-  hasMerchantPrivateKey: Boolean(wechatPayConfig.privateKey || wechatPayConfig.privateKeyPath),
-  hasApiV3Key: Boolean(wechatPayConfig.apiV3Key),
-  hasNotifyUrl: Boolean(wechatPayConfig.notifyUrl),
-  merchantSerialNoSuffix: wechatPayConfig.merchantSerialNo.slice(-8),
-}))
+app.get('/api/debug/wechat-config', async (_request, reply) => {
+  if (!runtimeAllowsDevEndpoints) {
+    return reply.code(404).send({ error: 'not_found' })
+  }
+  return {
+    payMode: wechatPayConfig.mode,
+    loginMode: wechatPayConfig.loginMode,
+    appIds: wechatPayConfig.appIds,
+    appSecretAppIds: Object.keys(wechatPayConfig.appSecrets),
+    hasMerchantPrivateKey: Boolean(wechatPayConfig.privateKey || wechatPayConfig.privateKeyPath),
+    hasApiV3Key: Boolean(wechatPayConfig.apiV3Key),
+    hasNotifyUrl: Boolean(wechatPayConfig.notifyUrl),
+    merchantSerialNoSuffix: wechatPayConfig.merchantSerialNo.slice(-8),
+  }
+})
 
 app.get('/api/debug/outbound-ip', async (request, reply) => {
   try {
@@ -529,8 +552,16 @@ app.post<{
     payerOpenId?: string
   }
 }>('/api/payments/wechat/prepay', async (request, reply) => {
-  const actor = actorFromRequest(request)
-  const payerOpenId = request.body.payerOpenId ?? actor.userId
+  const actor = await requireFamilyActor(request, reply)
+  if (!actor) {
+    return reply
+  }
+
+  const payerOpenId =
+    actor.openId ?? (allowDemoFamilyHeader ? request.body.payerOpenId : undefined)
+  if (!payerOpenId) {
+    return reply.code(400).send({ error: 'payer_open_id_required' })
+  }
 
   try {
     const payment = await store.createWechatPayment({
@@ -849,7 +880,10 @@ app.post<{
   }
 }>('/api/orders', async (request, reply) => {
   try {
-    const actor = actorFromRequest(request)
+    const actor = await requireFamilyActor(request, reply)
+    if (!actor) {
+      return reply
+    }
     const createdOrder = await store.createOrder(request.body, { userId: actor.userId })
     const order = await store.findOrder(createdOrder.orderId)
     if (order) {
@@ -861,15 +895,24 @@ app.post<{
   }
 })
 
-app.get('/api/my/orders', async (request) => ({
-  orders: await store.listMyOrders(actorFromRequest(request).userId),
-}))
+app.get('/api/my/orders', async (request, reply) => {
+  const actor = await requireFamilyActor(request, reply)
+  if (!actor) {
+    return reply
+  }
+
+  return {
+    orders: await store.listMyOrders(actor.userId),
+  }
+})
 
 app.get<{ Params: { orderId: string } }>('/api/my/orders/:orderId', async (request, reply) => {
-  const order = await store.findOrderForUser(
-    request.params.orderId,
-    actorFromRequest(request).userId,
-  )
+  const actor = await requireFamilyActor(request, reply)
+  if (!actor) {
+    return reply
+  }
+
+  const order = await store.findOrderForUser(request.params.orderId, actor.userId)
   if (!order) {
     return reply.code(404).send({ error: 'order_not_found' })
   }

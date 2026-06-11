@@ -1,3 +1,4 @@
+import { randomBytes } from 'node:crypto'
 import { mkdir } from 'node:fs/promises'
 import { dirname } from 'node:path'
 import { DatabaseSync } from 'node:sqlite'
@@ -938,12 +939,16 @@ export class SqliteStore {
       return this.paymentFromRow(existingPending)
     }
 
+    const amountFen = order.estimated_price * 100
+    if (!Number.isInteger(amountFen) || amountFen <= 0) {
+      throw new Error('invalid_payment_amount')
+    }
+
     const timestamp = now()
     const tradeTimestamp = timestamp.replace(/\D/g, '').slice(0, 14)
-    const tradeNonce = Math.random().toString(36).slice(2, 8).toUpperCase()
+    const tradeNonce = randomBytes(4).toString('hex').toUpperCase()
     const outTradeNo = `PAY${tradeTimestamp}${tradeNonce}`
     const paymentId = createId('pay')
-    const amountFen = order.estimated_price * 100
 
     this.db
       .prepare(`
@@ -1060,7 +1065,7 @@ export class SqliteStore {
 
     const timestamp = now()
     const refundTimestamp = timestamp.replace(/\D/g, '').slice(0, 14)
-    const refundNonce = Math.random().toString(36).slice(2, 8).toUpperCase()
+    const refundNonce = randomBytes(4).toString('hex').toUpperCase()
     const outRefundNo = `REF${refundTimestamp}${refundNonce}`
     const refundId = createId('rfd')
     const reason = input.reason?.trim() || '运营发起退款'
