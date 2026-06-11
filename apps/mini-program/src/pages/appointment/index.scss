@@ -1,0 +1,106 @@
+.appointment-page {
+  padding-bottom: 72px;
+}
+
+.form-head {
+  border-radius: 22px;
+  background: #226a4b;
+  padding: 30px 28px;
+}
+
+.form-title {
+  display: block;
+  color: #fff;
+  font-size: 44px;
+  font-weight: 800;
+  line-height: 1.18;
+}
+
+.form-copy {
+  display: block;
+  margin-top: 14px;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 26px;
+  line-height: 1.5;
+}
+
+.form-card {
+  margin-top: 20px;
+  padding: 24px;
+}
+
+.field-label {
+  display: block;
+  margin: 24px 0 10px;
+  color: #3b4740;
+  font-size: 25px;
+  font-weight: 700;
+}
+
+.field-label:first-child {
+  margin-top: 0;
+}
+
+.select-row,
+.text-input {
+  width: 100%;
+  border: 1px solid #dce6df;
+  border-radius: 14px;
+  background: #f9fbfa;
+  color: #18231d;
+  font-size: 28px;
+}
+
+.select-row {
+  display: flex;
+  min-height: 84px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+}
+
+.select-row.compact {
+  justify-content: center;
+}
+
+.select-arrow {
+  color: #226a4b;
+  font-size: 24px;
+}
+
+.date-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.text-input {
+  height: 84px;
+  padding: 0 20px;
+}
+
+.result-card {
+  margin-top: 18px;
+  padding: 22px;
+  border-color: #a5cfb7;
+  background: #eef8f2;
+}
+
+.result-title {
+  display: block;
+  color: #226a4b;
+  font-size: 30px;
+  font-weight: 800;
+}
+
+.result-copy {
+  display: block;
+  margin-top: 8px;
+  color: #52615a;
+  font-size: 24px;
+  line-height: 1.45;
+}
+
+.submit-button {
+  margin-top: 22px;
+}

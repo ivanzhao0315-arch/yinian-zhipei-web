@@ -1,0 +1,126 @@
+.confirm-head {
+  border-radius: 22px;
+  background: linear-gradient(135deg, #226a4b 0%, #2f7d5c 100%);
+  padding: 30px 28px;
+}
+
+.confirm-title {
+  display: block;
+  color: #fff;
+  font-size: 44px;
+  font-weight: 800;
+}
+
+.confirm-copy {
+  display: block;
+  margin-top: 12px;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 26px;
+  line-height: 1.45;
+}
+
+.summary-card,
+.rules-card {
+  margin-top: 20px;
+  padding: 24px;
+}
+
+.summary-row {
+  display: flex;
+  min-height: 74px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  border-bottom: 1px solid #edf2ef;
+}
+
+.summary-row:last-child {
+  border-bottom: 0;
+}
+
+.summary-label {
+  min-width: 110px;
+  color: #748078;
+  font-size: 25px;
+}
+
+.summary-value {
+  flex: 1;
+  color: #17231d;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.35;
+  text-align: right;
+}
+
+.rules-title {
+  display: block;
+  color: #17231d;
+  font-size: 31px;
+  font-weight: 800;
+}
+
+.rule-item {
+  display: block;
+  margin-top: 14px;
+  color: #56645c;
+  font-size: 25px;
+  line-height: 1.45;
+}
+
+.agreement-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-top: 18px;
+  padding: 22px 24px;
+}
+
+.agreement-check {
+  display: flex;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #cbd8d0;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 22px;
+  font-weight: 850;
+  line-height: 1;
+}
+
+.agreement-check.active {
+  border-color: #226a4b;
+  background: #226a4b;
+}
+
+.agreement-copy {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  min-width: 0;
+  gap: 4px;
+  color: #607067;
+  font-size: 24px;
+  line-height: 1.55;
+}
+
+.agreement-text,
+.agreement-link {
+  font-size: 24px;
+  line-height: 1.55;
+}
+
+.agreement-link {
+  color: #226a4b;
+  font-weight: 800;
+}
+
+.confirm-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 24px;
+}

@@ -1,0 +1,13 @@
+node_modules
+apps/*/node_modules
+apps/*/dist
+apps/api/.data
+**/.data
+apps/api/apps
+apps/api/.env
+apps/api/.env.local
+.env
+.env.local
+.git
+.DS_Store
+*.log

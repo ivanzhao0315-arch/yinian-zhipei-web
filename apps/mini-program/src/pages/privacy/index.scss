@@ -1,0 +1,92 @@
+.privacy-page {
+  padding-bottom: 64px;
+}
+
+.privacy-head {
+  border-radius: 22px;
+  background: linear-gradient(135deg, #226a4b 0%, #2f7d5c 100%);
+  padding: 30px 28px;
+}
+
+.privacy-kicker,
+.privacy-title,
+.privacy-copy {
+  display: block;
+}
+
+.privacy-kicker {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.privacy-title {
+  margin-top: 10px;
+  color: #fff;
+  font-size: 42px;
+  font-weight: 850;
+}
+
+.privacy-copy {
+  margin-top: 14px;
+  color: rgba(255, 255, 255, 0.84);
+  font-size: 25px;
+  line-height: 1.5;
+}
+
+.privacy-card {
+  margin-top: 20px;
+  padding: 24px 26px;
+}
+
+.privacy-section-title {
+  display: block;
+  color: #17231d;
+  font-size: 30px;
+  font-weight: 850;
+  line-height: 1.35;
+}
+
+.privacy-item {
+  display: block;
+  margin-top: 16px;
+  color: #526058;
+  font-size: 25px;
+  line-height: 1.62;
+}
+
+.privacy-contact {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-top: 20px;
+  padding: 22px 24px;
+}
+
+.contact-title,
+.contact-copy {
+  display: block;
+}
+
+.contact-title {
+  color: #17231d;
+  font-size: 29px;
+  font-weight: 850;
+}
+
+.contact-copy {
+  margin-top: 8px;
+  color: #6b7770;
+  font-size: 24px;
+}
+
+.contact-action {
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: #eaf5ee;
+  color: #226a4b;
+  padding: 9px 18px;
+  font-size: 23px;
+  font-weight: 800;
+}

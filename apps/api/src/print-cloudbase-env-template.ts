@@ -1,0 +1,35 @@
+import './env.js'
+
+const value = (name: string) => process.env[name]?.trim()
+
+const rows = [
+  ['NODE_ENV', 'production'],
+  ['HOST', '0.0.0.0'],
+  ['PORT', '5175'],
+  ['WECHAT_PAY_MODE', 'live'],
+  ['WECHAT_LOGIN_MODE', 'live'],
+  ['WECHAT_PAY_APPID', value('WECHAT_PAY_APPID') || 'wx75520fafc22173f5'],
+  ['WECHAT_PAY_APPIDS', value('WECHAT_PAY_APPIDS') || 'wx75520fafc22173f5'],
+  ['WECHAT_MINI_APP_SECRETS', 'wx75520fafc22173f5:填入小程序AppSecret'],
+  ['WECHAT_PAY_MCH_ID', value('WECHAT_PAY_MCH_ID') || '1112812285'],
+  [
+    'WECHAT_PAY_SERIAL_NO',
+    value('WECHAT_PAY_SERIAL_NO') || '2E6FA2830A854ACE39C47C500CCAA7EE284CB2F3',
+  ],
+  ['WECHAT_PAY_API_V3_KEY', '填入APIv3密钥'],
+  ['WECHAT_PAY_PRIVATE_KEY', '填入apiclient_key.pem内容，换行写成\\n'],
+  ['WECHAT_PAY_NOTIFY_URL', 'https://云托管域名/api/payments/wechat/notify'],
+  ['WECHAT_NOTIFY_MODE', value('WECHAT_NOTIFY_MODE') || 'live'],
+  ['WECHAT_NOTIFY_MINIPROGRAM_STATE', value('WECHAT_NOTIFY_MINIPROGRAM_STATE') || 'developer'],
+  ['WECHAT_NOTIFY_TEMPLATE_ORDER_CREATED', value('WECHAT_NOTIFY_TEMPLATE_ORDER_CREATED') || ''],
+  ['WECHAT_NOTIFY_TEMPLATE_ORDER_CONFIRMED', value('WECHAT_NOTIFY_TEMPLATE_ORDER_CONFIRMED') || ''],
+  ['WECHAT_NOTIFY_TEMPLATE_PAYMENT_PAID', value('WECHAT_NOTIFY_TEMPLATE_PAYMENT_PAID') || ''],
+  ['WECHAT_NOTIFY_TEMPLATE_FAMILY_ASSIGNED', value('WECHAT_NOTIFY_TEMPLATE_FAMILY_ASSIGNED') || ''],
+  ['WECHAT_NOTIFY_TEMPLATE_ESCORT_ASSIGNED', value('WECHAT_NOTIFY_TEMPLATE_ESCORT_ASSIGNED') || ''],
+  ['WECHAT_NOTIFY_TEMPLATE_PROGRESS_UPDATED', value('WECHAT_NOTIFY_TEMPLATE_PROGRESS_UPDATED') || ''],
+  ['WECHAT_NOTIFY_TEMPLATE_EXCEPTION_CREATED', value('WECHAT_NOTIFY_TEMPLATE_EXCEPTION_CREATED') || ''],
+]
+
+for (const [key, envValue] of rows) {
+  console.log(`${key}=${envValue}`)
+}

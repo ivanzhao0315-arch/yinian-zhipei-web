@@ -1,0 +1,22 @@
+{
+  "name": "yinian-zhipei",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:prototype": "npm run dev -w @yinian-zhipei/prototype",
+    "build:prototype": "npm run build -w @yinian-zhipei/prototype",
+    "lint:prototype": "npm run lint -w @yinian-zhipei/prototype",
+    "dev:mini-program": "npm run dev:weapp -w @yinian-zhipei/mini-program",
+    "build:mini-program": "npm run build:weapp -w @yinian-zhipei/mini-program",
+    "upload:mini-program": "npm run build:mini-program && npm run upload:weapp -w @yinian-zhipei/mini-program --",
+    "dev:admin": "npm run dev -w @yinian-zhipei/admin-web",
+    "build:admin": "npm run build -w @yinian-zhipei/admin-web",
+    "dev:api": "npm run dev -w @yinian-zhipei/api",
+    "build:api": "npm run build -w @yinian-zhipei/api"
+  }
+}
