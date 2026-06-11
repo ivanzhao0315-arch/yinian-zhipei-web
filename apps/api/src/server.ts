@@ -94,13 +94,9 @@ const envAdminConfig = {
 }
 const adminSessionTtlSeconds = Number(process.env.ADMIN_SESSION_TTL_SECONDS ?? 60 * 60 * 12)
 const allowDemoAdminHeader =
-  !isProductionRuntime &&
-  (process.env.ALLOW_DEMO_ADMIN_HEADER === 'true' ||
-    process.env.ALLOW_DEMO_ADMIN_HEADER !== 'false')
+  !isProductionRuntime && process.env.ALLOW_DEMO_ADMIN_HEADER !== 'false'
 const allowDemoEscortHeader =
-  !isProductionRuntime &&
-  (process.env.ALLOW_DEMO_ESCORT_HEADER === 'true' ||
-    process.env.ALLOW_DEMO_ESCORT_HEADER !== 'false')
+  !isProductionRuntime && process.env.ALLOW_DEMO_ESCORT_HEADER !== 'false'
 const notificationService = new NotificationService(
   store,
   wechatPayConfig,
@@ -316,16 +312,21 @@ app.get<{ Params: { '*': string } }>('/assets/*', async (request, reply) =>
   sendAdminAsset(reply, `assets/${request.params['*']}`),
 )
 
-app.get('/api/debug/wechat-config', async () => ({
-  payMode: wechatPayConfig.mode,
-  loginMode: wechatPayConfig.loginMode,
-  appIds: wechatPayConfig.appIds,
-  appSecretAppIds: Object.keys(wechatPayConfig.appSecrets),
-  hasMerchantPrivateKey: Boolean(wechatPayConfig.privateKey || wechatPayConfig.privateKeyPath),
-  hasApiV3Key: Boolean(wechatPayConfig.apiV3Key),
-  hasNotifyUrl: Boolean(wechatPayConfig.notifyUrl),
-  merchantSerialNoSuffix: wechatPayConfig.merchantSerialNo.slice(-8),
-}))
+app.get('/api/debug/wechat-config', async (_request, reply) => {
+  if (!runtimeAllowsDevEndpoints) {
+    return reply.code(404).send({ error: 'not_found' })
+  }
+  return {
+    payMode: wechatPayConfig.mode,
+    loginMode: wechatPayConfig.loginMode,
+    appIds: wechatPayConfig.appIds,
+    appSecretAppIds: Object.keys(wechatPayConfig.appSecrets),
+    hasMerchantPrivateKey: Boolean(wechatPayConfig.privateKey || wechatPayConfig.privateKeyPath),
+    hasApiV3Key: Boolean(wechatPayConfig.apiV3Key),
+    hasNotifyUrl: Boolean(wechatPayConfig.notifyUrl),
+    merchantSerialNoSuffix: wechatPayConfig.merchantSerialNo.slice(-8),
+  }
+})
 
 app.get('/api/debug/outbound-ip', async (request, reply) => {
   try {
