@@ -631,7 +631,7 @@ app.post<{
       paidAt: transaction.success_time,
     })
     const updatedOrder = await store.findOrder(payment.orderId)
-    if (updatedOrder) {
+    if (payment.justPaid && updatedOrder) {
       await notifyBestEffort(notificationService.notifyPaymentPaid(updatedOrder))
     }
 
@@ -766,7 +766,7 @@ app.post<{
         paidAt: notification.success_time,
       })
       const order = await store.findOrder(payment.orderId)
-      if (order) {
+      if (payment.justPaid && order) {
         await notifyBestEffort(notificationService.notifyPaymentPaid(order))
       }
     }
@@ -853,7 +853,7 @@ app.post<{
       transactionId: `mock_tx_${Date.now()}`,
     })
     const order = await store.findOrder(payment.orderId)
-    if (order) {
+    if (payment.justPaid && order) {
       await notifyBestEffort(notificationService.notifyPaymentPaid(order))
     }
 
