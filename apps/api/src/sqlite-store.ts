@@ -1602,6 +1602,14 @@ export class SqliteStore {
     if (scope && order.assigned_escort_id !== scope.escortId) {
       throw new Error('forbidden')
     }
+    // 已取消/暂无法服务/已完成的订单不允许再推进度，防止陪诊员误操作把订单"复活"
+    if (
+      order.status === orderStatuses.cancelled ||
+      order.status === orderStatuses.unavailable ||
+      order.status === orderStatuses.completed
+    ) {
+      throw new Error('invalid_status_transition')
+    }
 
     const step = progressStepList.find((item) => item.key === input.stepKey)
     if (!step) {
@@ -1694,6 +1702,14 @@ export class SqliteStore {
     const order = this.requireOrderRow(orderId)
     if (scope && order.assigned_escort_id !== scope.escortId) {
       throw new Error('forbidden')
+    }
+    // 同 updateProgress：终态订单不允许再报异常，防止已取消订单被拉回处理流程
+    if (
+      order.status === orderStatuses.cancelled ||
+      order.status === orderStatuses.unavailable ||
+      order.status === orderStatuses.completed
+    ) {
+      throw new Error('invalid_status_transition')
     }
 
     const timestamp = now()

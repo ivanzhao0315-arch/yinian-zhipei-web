@@ -351,6 +351,20 @@ test('lets admins edit and cancel an order with operation logs', async () => {
       estimatedPrice: 258,
     })
     const cancelled = await store.cancelOrder(created.orderId, '家属改期，订单取消')
+
+    await assert.rejects(
+      () => store.updateProgress(created.orderId, { stepKey: 'departed' }),
+      /invalid_status_transition/,
+    )
+    await assert.rejects(
+      () =>
+        store.createException(created.orderId, {
+          exceptionType: 'other',
+          description: '取消后不应还能报异常',
+        }),
+      /invalid_status_transition/,
+    )
+
     const detail = await store.getAdminOrder(created.orderId)
     await store.close()
 
@@ -360,6 +374,7 @@ test('lets admins edit and cancel an order with operation logs', async () => {
     assert.equal(updated.customerServiceNote, '电话确认：家属要求提前半小时到院')
     assert.equal(updated.estimatedPrice, 258)
     assert.equal(cancelled.status, 'cancelled')
+    assert.equal(detail?.status, 'cancelled')
     assert.ok(detail?.logs.some((log) => log.action === 'order_updated'))
     assert.ok(detail?.logs.some((log) => log.action === 'order_cancelled'))
   } finally {
