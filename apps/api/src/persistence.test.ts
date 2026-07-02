@@ -382,13 +382,13 @@ test('creates and settles a WeChat payment record for an order', async () => {
     })
     const unpaidOrder = await store.findOrderForUser('ord_001', 'user_demo')
 
-    await store.markWechatPaymentPaid({
+    const firstMark = await store.markWechatPaymentPaid({
       outTradeNo: created.outTradeNo,
       transactionId: '420000000020260603000001',
       paidAmountFen: created.amountFen,
       paidAt: '2026-06-03T10:00:00+08:00',
     })
-    await store.markWechatPaymentPaidByOrderId({
+    const secondMark = await store.markWechatPaymentPaidByOrderId({
       orderId: 'ord_001',
       transactionId: '420000000020260603000002',
       paidAt: '2026-06-03T10:05:00+08:00',
@@ -400,6 +400,8 @@ test('creates and settles a WeChat payment record for an order', async () => {
     assert.equal(unpaidOrder?.payment?.status, 'pending')
     assert.equal(paidOrder?.payment?.status, 'paid')
     assert.equal(paidOrder?.payment?.transactionId, '420000000020260603000002')
+    assert.equal(firstMark.justPaid, true)
+    assert.equal(secondMark.justPaid, false)
   } finally {
     await rm(workspace, { force: true, recursive: true })
   }

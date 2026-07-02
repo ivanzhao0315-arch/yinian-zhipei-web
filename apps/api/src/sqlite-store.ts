@@ -988,6 +988,8 @@ export class SqliteStore {
 
   async markWechatPaymentPaid(input: MarkPaymentPaidInput) {
     const payment = this.requirePaymentByOutTradeNo(input.outTradeNo)
+    // 微信回调会重试、管理员可反复同步：只有首次从未支付变为已支付才算跃迁，用于通知去重
+    const justPaid = payment.status !== 'paid'
     const timestamp = now()
 
     this.db
@@ -1005,7 +1007,7 @@ export class SqliteStore {
         input.outTradeNo,
       )
 
-    return this.paymentFromRow(this.requirePaymentByOutTradeNo(input.outTradeNo))
+    return { ...this.paymentFromRow(this.requirePaymentByOutTradeNo(input.outTradeNo)), justPaid }
   }
 
   async markWechatPaymentPaidByOrderId(input: MarkPaymentPaidByOrderInput) {
