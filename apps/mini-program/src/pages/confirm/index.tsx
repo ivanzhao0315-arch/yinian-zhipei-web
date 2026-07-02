@@ -15,6 +15,7 @@ type AppointmentDraft = {
   relation: string
   date: string
   time: string
+  contactName?: string
   contactPhone: string
   note?: string
 }
@@ -23,7 +24,7 @@ const emptyDraft: AppointmentDraft = {
   hospital: '兰州大学第一医院',
   service: '半日陪诊 ¥238 起',
   relation: '父亲',
-  date: '2026-06-04',
+  date: new Date().toISOString().slice(0, 10),
   time: '08:30',
   contactPhone: ''
 }
@@ -72,7 +73,7 @@ export default function Confirm () {
           visitDate: draft.date,
           visitTime: draft.time,
           servicePackage: servicePackageMap[draft.service] ?? 'half_day',
-          contactName: '家属用户',
+          contactName: draft.contactName || '家属用户',
           contactPhone: draft.contactPhone,
           elderRelation: draft.relation
         }
@@ -125,6 +126,10 @@ export default function Confirm () {
         <View className='summary-row'>
           <Text className='summary-label'>时间</Text>
           <Text className='summary-value'>{draft.date} {draft.time}</Text>
+        </View>
+        <View className='summary-row'>
+          <Text className='summary-label'>联系人</Text>
+          <Text className='summary-value'>{draft.contactName || '未填写'}</Text>
         </View>
         <View className='summary-row'>
           <Text className='summary-label'>手机号</Text>

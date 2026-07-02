@@ -13,6 +13,7 @@ export default function Appointment () {
   const [relationIndex, setRelationIndex] = useState(1)
   const [date, setDate] = useState(() => new Date().toISOString().slice(0, 10))
   const [time, setTime] = useState('08:30')
+  const [contactName, setContactName] = useState('')
   const [contactPhone, setContactPhone] = useState('')
 
   useDidShow(() => {
@@ -26,6 +27,13 @@ export default function Appointment () {
   })
 
   const goConfirm = () => {
+    if (!contactName.trim()) {
+      Taro.showToast({
+        title: '请填写联系人姓名',
+        icon: 'none'
+      })
+      return
+    }
     if (contactPhone.length < 11) {
       Taro.showToast({
         title: '请填写手机号',
@@ -40,6 +48,7 @@ export default function Appointment () {
       relation: relations[relationIndex],
       date,
       time,
+      contactName: contactName.trim(),
       contactPhone
     })
     Taro.navigateTo({ url: '/pages/confirm/index' })
@@ -90,6 +99,15 @@ export default function Appointment () {
             </View>
           </Picker>
         </View>
+
+        <Text className='field-label'>联系人姓名</Text>
+        <Input
+          className='text-input'
+          placeholder='请输入联系人姓名'
+          maxlength={20}
+          value={contactName}
+          onInput={(event) => setContactName(String(event.detail.value))}
+        />
 
         <Text className='field-label'>联系人手机</Text>
         <Input
